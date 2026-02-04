@@ -1,0 +1,125 @@
+#Notes from R lesson on Jan 26th, 2026
+##Goals: To learn how to plot in R with ggplot2
+
+#load packages
+library(tidyverse)
+
+#load data
+sample_data <- read_csv("sample_data.csv")
+
+#no inputs/arguments needed
+getwd()
+Sys.Date()
+
+#some other functions require input
+sum(10,12)
+
+#
+round(3.1415)
+round(3.1415,3) # ?round
+round(x= 3.1415, digits = 3) #full command more reproducible
+
+#Plot
+ggplot(data = sample_data) +
+  # temp vs cells in Lake Ontario
+  aes (x = temperature, y = cells_per_ml,
+       color = env_group, size = chlorophyll) +
+  #Updating labels of plots
+  labs (x = "Temperature (C)", y = "Cells/mL", 
+        title= "Does temperature affect microbial abundance?",
+        color = "Environmental Group",
+        size = "Chlorophyll (ug/L") +
+  #Plot points
+  geom_point()
+
+
+# Load in new data
+buoy_data <- read_csv ("buoy_data.csv")
+dim(buoy_data) # rows, columns
+head(buoy_data)
+
+#Plot: day_of_year on x-axis; temp on y-axis
+ggplot(data = buoy_data) +
+  aes(x=day_of_year, y=temperature, color=depth,
+      group=sensor) +
+  geom_line() +
+  facet_wrap(~buoy)
+
+#What is the structure of the data?
+str(buoy_data)
+
+
+
+# Go back sample_data
+  ggplot(data = sample_data) +
+  #x-axis that is discrete: categorical
+    aes(x = env_group, y = cells_per_ml,
+        #color= env_group,
+        fill = env_group) + 
+    geom_jitter(shape = 23, alpha = 0.5,
+                aes(size = chlorophyll)) +
+    geom_boxplot(alpha = 0.5, outliers = FALSE) +
+  # scale_color_manual(
+  # values= c("blue", "red", "yellow"))
+  # scale_color_brewer(palette = "Set1") +
+    scale_fill_brewer(palette = "Set1")
+  
+# Univariate plots
+  
+  ggplot(sample_data) +
+    aes(x = cells_per_ml,) +
+    geom_histogram(bins=20) +
+    theme_linedraw()
+  
+#Saving plots
+  ggsave( "histogram_cellsPerML.png",
+    width = 6, height = 4,
+    units = "in")
+
+#What is the relationship between 
+   
+ggplot (data = sample_data) +
+  aes(x= temperature, y= chlorophyll)+
+  geom_point(aes(color= depth))+
+  labs( x = "Temperature (C)",
+        y = "Chlorophyll (ug/L)") +
+  theme_bw() +
+  theme(legend.position = c(0.8, 0.8))
+
+
+
+View(sample_data)
+
+#1 nitrogen plot
+ggplot(data = sample_data) +
+  aes(x = total_nitrogen,
+      y = cells_per_ml,      
+      color = env_group,
+      size = temperature) +
+  labs(x = "Total nitrogen (units)",
+       y = "Microbial abundance (cells/mL)",
+       title = "Does total nitrogen affect microbial abundance?",
+       color = "Environmental Group",
+       size = "Temperature (C)") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+
+#2 phos plot
+ggplot(data = sample_data) +
+  aes(x = total_phosphorus,
+      y = cells_per_ml,      
+      color = env_group,
+      size = temperature) +
+  labs(x = "Total phosphorous (units)",
+       y = "Microbial abundance (cells/mL)",
+       title = "Does total phosphorous affect microbial abundance?",
+       color = "Environmental Group",
+       size = "Temperature (C)") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+
+  
+    
+
