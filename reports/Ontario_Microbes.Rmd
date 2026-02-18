@@ -1,0 +1,100 @@
+---
+title: "Report on Lake Ontario Microbes"
+author: "Maria Calderon-Marrero"
+date: "2026-02-18"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# load packages
+
+First we need to ensure we have access to the functions we need for our analysis.
+
+```{r load-packages}
+library(tidyverse)
+```
+
+# Goal of this report
+
+Here, I create an analysis of environmental and microbial data from Lake Ontario. The goal is to determine how environmental variables like temperature affect the abundance of different Phyla of bacteria.
+
+# Read in the Data
+
+We need two files: 1)The Taxon File (cleaned up); 2) The Sample Data
+
+## 1)Taxonomy Data
+
+```{r load-data-taxon}
+# Load taxon abundance data
+taxon_dirty_df <-
+  read_csv("data/taxon_abundance.csv", skip=2) %>%
+  select(-...10) %>%
+  rename(sequencer = ...9)
+
+#Look at the top of the dataframe
+head(taxon_dirty_df, 6)
+#View(taxon_dirty_df)
+
+# CLean up data by removing columns
+taxon_clean_df <-
+  taxon_dirty_df %>%
+  select(sample_id : Cyanobacteria)
+
+#How many columns? Intuition check!
+ncol(taxon_clean_df) #Clean data frame
+ncol(taxon_dirty_df) #Dirty data frame
+```
+
+## 2) Environmental Data
+
+Let's load second data set
+
+```{r load-data-samples}
+sample_data_df <-
+  read_csv("data/sample_data.csv")
+
+#Quick Look
+head(sample_data_df)
+
+```
+
+
+# Reshaping the data
+
+Create long formatted data from wide-formatte data
+
+```{r reshape data}
+taxon_long_df <-
+taxon_clean_df %>%
+  pivot_longer(cols = Proteobacteria : Cyanobacteria,
+               names_to = "Phylum", values_to = "Abundance")
+
+#Intuition Check
+nrow(taxon_long_df)
+nrow(taxon_dirty_df)
+```
+
+
+## Plot Taxon Data
+
+```{r plot-taxa}
+taxon_long_df %>%
+  ggplot(aes(x = sample_id, y = Abundance, fill = Phylum))+
+           geom_col() +
+           theme(axis.text.x = element_text(angle = 90))
+```
+
+
+
+
+
+
+
+
+
+
